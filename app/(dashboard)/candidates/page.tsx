@@ -5,7 +5,7 @@ import getCandidates from '@/utils/getCandidate';
 import { redirect, useRouter } from 'next/navigation';
 import { PlusOutlined } from '@ant-design/icons';
 import isAuth from '../../components/Auth';
-import { Suspense, useLayoutEffect } from 'react';
+import { useLayoutEffect } from 'react';
 
 const columns = [
   {
@@ -50,12 +50,6 @@ const columns = [
 // ];
 const Home = () => {
   const router = useRouter();
-  useLayoutEffect(() => {
-    const auth = localStorage.getItem('auth');
-    if (!auth) {
-      return redirect('/login');
-    }
-  }, []);
 
   const { isPending, error, data, isFetching } = useQuery({
     queryKey: ['candidates'],
@@ -70,7 +64,7 @@ const Home = () => {
   // console.log(dynamicData);
 
   return (
-    <Suspense fallback={<div>loading...</div>}>
+    <>
       <Flex justify="end">
         <Button type="primary" size="large" icon={<PlusOutlined />}>
           Create Candidate{' '}
@@ -91,8 +85,8 @@ const Home = () => {
           };
         }}
       />
-    </Suspense>
+    </>
   );
 };
 
-export default isAuth(Home);
+export default Home;

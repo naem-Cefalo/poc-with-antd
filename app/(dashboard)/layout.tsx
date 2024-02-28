@@ -1,15 +1,16 @@
 'use client';
-import { Suspense } from 'react';
+import { useLayoutEffect } from 'react';
 import MainLayout from '../components/MainLayout';
+import { redirect } from 'next/navigation';
+import isAuth from '../components/Auth';
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return (
-    <Suspense fallback={<div>loading</div>}>
-      <MainLayout>{children}</MainLayout>
-    </Suspense>
-  );
+function DashboardLayout({ children }: { children: React.ReactNode }) {
+  useLayoutEffect(() => {
+    const auth = localStorage.getItem('auth');
+    if (!auth) {
+      return redirect('/login');
+    }
+  }, []);
+  return <MainLayout>{children}</MainLayout>;
 }
+export default isAuth(DashboardLayout);

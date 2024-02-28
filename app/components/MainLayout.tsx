@@ -34,7 +34,11 @@ function getItem(
 }
 
 const items: MenuItem[] = [
-  getItem(<Link href="/">Candidates</Link>, '1', <PieChartOutlined />),
+  getItem(
+    <Link href="/candidates">Candidates</Link>,
+    '1',
+    <PieChartOutlined />
+  ),
   getItem(<Link href="/jobs">Jobs</Link>, '2', <DesktopOutlined />),
   getItem('User', 'sub1', <UserOutlined />, [
     getItem('Tom', '3'),
@@ -87,7 +91,8 @@ function MainLayout({ children }: { children: React.ReactNode }) {
           <div
             style={{
               padding: 24,
-              minHeight: '100%',
+              height: '100%',
+              minHeight: 400,
               background: colorBgContainer,
               borderRadius: borderRadiusLG,
             }}>
