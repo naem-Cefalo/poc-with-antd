@@ -2,10 +2,10 @@
 import { Button, Flex, Table, Typography } from 'antd';
 import { useQuery } from '@tanstack/react-query';
 import getCandidates from '@/utils/getCandidate';
-import { redirect, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { PlusOutlined } from '@ant-design/icons';
-import isAuth from '../../components/Auth';
-import { useLayoutEffect } from 'react';
+import { useState } from 'react';
+import CandidateCreateForm from './_components/CandidateCreateForm';
 
 const columns = [
   {
@@ -21,40 +21,26 @@ const columns = [
     dataIndex: 'email',
   },
 ];
-
-// const DemoData = [
-//   {
-//     key: '1',
-//     name: 'John Brown',
-//     age: 32,
-//     address: 'New York No. 1 Lake Park',
-//   },
-//   {
-//     key: '2',
-//     name: 'Jim Green',
-//     age: 42,
-//     address: 'London No. 1 Lake Park',
-//   },
-//   {
-//     key: '3',
-//     name: 'Joe Black',
-//     age: 32,
-//     address: 'Sydney No. 1 Lake Park',
-//   },
-//   {
-//     key: '4',
-//     name: 'Jim Red',
-//     age: 32,
-//     address: 'London No. 2 Lake Park',
-//   },
-// ];
+type Candidate = {
+  id: string;
+  name: string;
+  email: string;
+};
+const DemoData: Candidate[] = [];
 const Home = () => {
+  const [open, setOpen] = useState(false);
+  const [tableData, setTableData] = useState(DemoData);
+
   const router = useRouter();
 
-  const { isPending, error, data, isFetching } = useQuery({
-    queryKey: ['candidates'],
-    queryFn: getCandidates,
-  });
+  // const { isPending, error, data, isFetching } = useQuery({
+  //   queryKey: ['candidates'],
+  //   queryFn: getCandidates,
+  // });
+  const onCreate = (values: any) => {
+    console.log('Received values of form: ', values);
+    setOpen(false);
+  };
 
   // const dynamicData = await fetch(
   //   `https://jsonplaceholder.typicode.com/users`,
@@ -66,16 +52,22 @@ const Home = () => {
   return (
     <>
       <Flex justify="end">
-        <Button type="primary" size="large" icon={<PlusOutlined />}>
+        <Button
+          type="primary"
+          size="large"
+          icon={<PlusOutlined />}
+          onClick={() => {
+            setOpen(true);
+          }}>
           Create Candidate{' '}
         </Button>
       </Flex>
       <Table
         rowKey={(record) => record.id}
         title={() => <Typography.Text strong>All Candidates</Typography.Text>}
-        loading={isPending}
+        // loading={isPending}
         columns={columns}
-        dataSource={data?.data}
+        dataSource={tableData}
         size="middle"
         onRow={(record, rowIndex) => {
           return {
@@ -83,6 +75,13 @@ const Home = () => {
               router.push(`candidates/${record.id}`);
             }, // click row
           };
+        }}
+      />
+      <CandidateCreateForm
+        open={open}
+        onCreate={onCreate}
+        onCancel={() => {
+          setOpen(false);
         }}
       />
     </>

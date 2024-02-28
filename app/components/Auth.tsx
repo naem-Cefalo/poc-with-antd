@@ -1,5 +1,5 @@
 'use client';
-import { useLayoutEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { redirect } from 'next/navigation';
 
 export default function isAuth(Component: any) {
@@ -8,15 +8,11 @@ export default function isAuth(Component: any) {
     if (typeof window !== 'undefined') {
       auth = localStorage.getItem('auth');
     }
-    useLayoutEffect(() => {
+    useEffect(() => {
       if (!auth) {
-        return redirect('/login');
+        redirect('/login');
       }
-    }, [auth]);
-
-    if (!auth) {
-      return redirect('/login');
-    }
+    }, []);
 
     return <Component {...props} />;
   };
