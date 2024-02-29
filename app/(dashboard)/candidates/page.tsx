@@ -38,8 +38,7 @@ const Home = () => {
   //   queryFn: getCandidates,
   // });
   const onCreate = (values: any) => {
-    console.log('Received values of form: ', values);
-    setOpen(false);
+    setTableData((prev) => [...prev, values]);
   };
 
   // const dynamicData = await fetch(

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Form, Input, Modal, Radio, Steps, message } from 'antd';
+import { Button, Flex, Form, Input, Modal, Radio, Steps, message } from 'antd';
 
 interface Values {
   title: string;
@@ -9,49 +9,9 @@ interface Values {
 
 interface CandidateCreateFormmProps {
   open: boolean;
-  onCreate: (values: Values) => void;
+  onCreate: (values: any) => void;
   onCancel: () => void;
 }
-
-const steps = [
-  {
-    title: 'First',
-    content: (
-      <>
-        <Form.Item
-          name="name"
-          label="Name"
-          rules={[
-            {
-              required: true,
-              message: 'Please input the title of collection!',
-            },
-          ]}>
-          <Input />
-        </Form.Item>
-        <Form.Item name="description" label="Description">
-          <Input type="textarea" />
-        </Form.Item>
-        <Form.Item
-          name="modifier"
-          className="collection-create-form_last-form-item">
-          <Radio.Group>
-            <Radio value="public">Public</Radio>
-            <Radio value="private">Private</Radio>
-          </Radio.Group>
-        </Form.Item>
-      </>
-    ),
-  },
-  {
-    title: 'Second',
-    content: 'Second-content',
-  },
-  {
-    title: 'Last',
-    content: 'Last-content',
-  },
-];
 
 const CandidateCreateForm: React.FC<CandidateCreateFormmProps> = ({
   open,
@@ -60,6 +20,7 @@ const CandidateCreateForm: React.FC<CandidateCreateFormmProps> = ({
 }) => {
   const [form] = Form.useForm();
   const [current, setCurrent] = useState(0);
+  const [formData, setFormData] = useState({});
 
   const next = () => {
     setCurrent(current + 1);
@@ -68,7 +29,133 @@ const CandidateCreateForm: React.FC<CandidateCreateFormmProps> = ({
   const prev = () => {
     setCurrent(current - 1);
   };
-
+  const steps = [
+    {
+      title: 'Basic info',
+      content: (
+        <Form name="basicInfo" layout="vertical" form={form}>
+          <Form.Item
+            name="name"
+            label="Name"
+            rules={[
+              {
+                required: true,
+                message: 'Please input the name',
+              },
+            ]}>
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="email"
+            label="Email"
+            rules={[
+              {
+                type: 'email',
+                required: true,
+                message: 'Please input the email',
+              },
+            ]}>
+            <Input type="email" />
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit">
+              Next
+            </Button>
+          </Form.Item>
+        </Form>
+      ),
+    },
+    {
+      title: 'Education',
+      content: (
+        <Form name="professionalInfo" layout="vertical" form={form}>
+          <Form.Item
+            name="age"
+            label="Age"
+            rules={[
+              {
+                required: true,
+                message: 'Please input the name',
+              },
+            ]}>
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="address"
+            label="Address"
+            rules={[
+              {
+                required: true,
+                message: 'Please input the email',
+              },
+            ]}>
+            <Input type="textarea" />
+          </Form.Item>
+          <Flex gap={20}>
+            <Form.Item>
+              <Button type="primary" htmlType="submit">
+                Next
+              </Button>
+            </Form.Item>
+            <Button onClick={() => prev()}>Previous</Button>
+          </Flex>
+        </Form>
+      ),
+    },
+    {
+      title: 'Experience',
+      content: (
+        <Form name="SkillInfo" layout="vertical" form={form}>
+          <Form.Item
+            name="skill"
+            label="Skill"
+            rules={[
+              {
+                required: true,
+                message: 'Please input the skill',
+              },
+            ]}>
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="years"
+            label="Years"
+            rules={[
+              {
+                required: true,
+                message: 'Please input the email',
+              },
+            ]}>
+            <Input />
+          </Form.Item>
+          <Flex gap={20}>
+            <Form.Item>
+              <Button type="primary" htmlType="submit">
+                Done
+              </Button>
+            </Form.Item>
+            <Button onClick={() => prev()}>Previous</Button>
+          </Flex>
+        </Form>
+      ),
+    },
+    {
+      title: 'Confirmation',
+      content: (
+        <div>
+          <h3>A new candidate has created</h3>
+          <Button
+            onClick={() => {
+              setCurrent(0);
+              form.resetFields();
+              onCancel();
+            }}>
+            Close
+          </Button>
+        </div>
+      ),
+    },
+  ];
   const items = steps.map((item) => ({ key: item.title, title: item.title }));
 
   return (
@@ -76,46 +163,30 @@ const CandidateCreateForm: React.FC<CandidateCreateFormmProps> = ({
       open={open}
       title="Create a new candidate"
       onCancel={onCancel}
-      footer={
-        <div>
-          {current < steps.length - 1 && (
-            <Button type="primary" onClick={() => next()}>
-              Next
-            </Button>
-          )}
-          {current === steps.length - 1 && (
-            <Button
-              type="primary"
-              onClick={() => message.success('Processing complete!')}>
-              Done
-            </Button>
-          )}
-          {current > 0 && (
-            <Button style={{ margin: '0 8px' }} onClick={() => prev()}>
-              Previous
-            </Button>
-          )}
-        </div>
-      }
-      onOk={() => {
-        form
-          .validateFields()
-          .then((values) => {
-            form.resetFields();
-            onCreate(values);
-          })
-          .catch((info) => {
-            console.log('Validate Failed:', info);
+      afterClose={() => {
+        onCreate(formData);
+      }}
+      width={600}
+      footer={null}>
+      <Steps
+        size="small"
+        current={current}
+        items={items}
+        style={{
+          margin: '20px 0px',
+        }}
+      />
+      <Form.Provider
+        onFormFinish={(name, info) => {
+          setFormData((pre) => {
+            return { ...pre, [name]: info.values };
           });
-      }}>
-      <Form
-        form={form}
-        layout="vertical"
-        name="form_in_modal"
-        initialValues={{ modifier: 'public' }}>
-        <Steps current={current} items={items} />
-        <div style={{}}>{steps[current].content}</div>
-      </Form>
+          console.log('finish called');
+
+          next();
+        }}>
+        {steps[current].content}
+      </Form.Provider>
     </Modal>
   );
 };
