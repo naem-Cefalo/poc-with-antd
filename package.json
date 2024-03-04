@@ -6,9 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "lint-staged": "lint-staged",
-    "type-check": "tsc --project tsconfig.json --pretty --noEmit && echo "
+    "lint": "next lint"
   },
   "dependencies": {
     "@ant-design/nextjs-registry": "^1.0.0",
@@ -28,9 +26,6 @@
     "zustand": "^4.5.1"
   },
   "devDependencies": {
-    "@tanstack/eslint-plugin-query": "^5.20.1",
-    "husky": "^4.3.8",
-    "lint-staged": "^15.2.2",
-    "prettier": "^3.2.5"
+    "@tanstack/eslint-plugin-query": "^5.20.1"
   }
 }

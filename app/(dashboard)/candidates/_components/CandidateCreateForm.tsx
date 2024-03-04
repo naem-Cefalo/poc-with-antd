@@ -57,7 +57,6 @@ const CandidateCreateForm: React.FC<CandidateCreateFormProps> = ({
               <Form.Item
                 name="email"
                 label="Email"
-                sfdsdfsfd
                 rules={[
                   {
                     type: 'email',
