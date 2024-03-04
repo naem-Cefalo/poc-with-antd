@@ -1,24 +1,65 @@
 'use client';
-import { Button, Flex, Table, Typography } from 'antd';
+import { Button, DatePickerProps, Flex, Table, Tag, Typography } from 'antd';
 import { useQuery } from '@tanstack/react-query';
 import getCandidates from '@/utils/getCandidate';
 import { useRouter } from 'next/navigation';
 import { PlusOutlined } from '@ant-design/icons';
 import { useState } from 'react';
 import CandidateCreateForm from './_components/CandidateCreateForm';
+import { useCandidateStore } from '@/app/lib/candidateStore';
+import dayjs from 'dayjs';
+import { DatePickerType } from 'antd/es/date-picker';
+import Link from 'next/link';
 
 const columns = [
   {
     title: 'Name',
     dataIndex: 'name',
+    render: (text: string, record: { id: string }) => {
+      return <Link href={`/candidates/${record.id}`}>{text}</Link>;
+    },
   },
   {
-    title: 'Age',
-    dataIndex: 'id',
+    title: 'Applied at',
+    dataIndex: 'appliedAt',
+    render: (text: { $d: string }) => {
+      return (
+        <Typography.Text>{dayjs(text.$d).format('DD/MM/YYYY')}</Typography.Text>
+      );
+    },
   },
   {
     title: 'Email',
     dataIndex: 'email',
+  },
+  {
+    title: 'Contact number',
+    dataIndex: 'contactNumber',
+  },
+  {
+    title: 'Skills',
+    dataIndex: 'skill',
+    render: (record: string[]) => {
+      console.log(record);
+
+      return (
+        <>
+          {record.map((tag, idx) => {
+            let color = ['geekblue', 'green', 'processing'];
+
+            return (
+              <Tag color={color[idx]} key={tag}>
+                {tag.toUpperCase()}
+              </Tag>
+            );
+          })}
+        </>
+      );
+    },
+  },
+  {
+    title: 'Total Experience',
+    dataIndex: 'years',
   },
 ];
 type Candidate = {
@@ -26,10 +67,10 @@ type Candidate = {
   name: string;
   email: string;
 };
-const DemoData: Candidate[] = [];
 const Home = () => {
   const [open, setOpen] = useState(false);
-  const [tableData, setTableData] = useState(DemoData);
+  const tableData = useCandidateStore((state) => state.tableData);
+  const setTableData = useCandidateStore((state) => state.setTableData);
 
   const router = useRouter();
 
@@ -38,7 +79,8 @@ const Home = () => {
   //   queryFn: getCandidates,
   // });
   const onCreate = (values: any) => {
-    setTableData((prev) => [...prev, values]);
+    const valuesWithId = { id: Math.random() * 10000, ...values };
+    setTableData(valuesWithId);
   };
 
   // const dynamicData = await fetch(
@@ -47,6 +89,7 @@ const Home = () => {
   // );
   // const promisData = await dynamicData.json();
   // console.log(dynamicData);
+  console.log(tableData);
 
   return (
     <>
